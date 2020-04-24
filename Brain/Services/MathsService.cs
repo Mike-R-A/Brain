@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Brain.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -6,21 +7,16 @@ using System.Threading.Tasks;
 namespace Brain.Services
 {
     public interface IMathsService {
-        IEnumerable<double> NormaliseArray(IEnumerable<double> inputArray);
-        IDictionary<string, double> NormaliseDictionary(IDictionary<string, double> dict);
-        IDictionary<string, double> AddDictionaries(IDictionary<string, double> dictionary1, IDictionary<string, double> dictionary2);
-        IDictionary<string, double> ScaleDictionary(IDictionary<string, double> dict, double factor);
+        Associations NormaliseAssociations(Associations dict);
+        Associations AddAssociations(Associations dictionary1, Associations dictionary2);
+        Associations ScaleAssociations(Associations dict, double factor);
+        AssociationsLookup AddAssociationLookups(AssociationsLookup associationsLookup1, AssociationsLookup associationsLookup2, double weightFactor);
+
     }
 
     public class MathsService : IMathsService
     {
-        public IEnumerable<double> NormaliseArray(IEnumerable<double> inputArray)
-        {
-            var sum = inputArray.Sum();
-            return inputArray.Select(x => x / sum);
-        }
-
-        public IDictionary<string, double> AddDictionaries(IDictionary<string, double> dictionary1, IDictionary<string, double> dictionary2)
+        public Associations AddAssociations(Associations dictionary1, Associations dictionary2)
         {
             var result = new Dictionary<string, double>();
 
@@ -40,21 +36,46 @@ namespace Brain.Services
                 }
             }
 
-            return result;
+            return new Associations(result);
         }
 
-        public IDictionary<string, double> NormaliseDictionary(IDictionary<string, double> dict)
+        public Associations NormaliseAssociations(Associations dict)
         {
             var sum = dict.Values.Sum();
 
-            return ScaleDictionary(dict, 1 / sum);
+            return ScaleAssociations(dict, 1 / sum);
         }
 
-        public IDictionary<string, double> ScaleDictionary(IDictionary<string, double> dict, double factor)
+        public Associations ScaleAssociations(Associations dict, double factor)
         {
             var list = dict.Select(k => new KeyValuePair<string, double>(k.Key, k.Value * factor));
 
-            return list.ToDictionary(x => x.Key, x => x.Value);
+            return new Associations(list.ToDictionary(x => x.Key, x => x.Value));
+        }
+
+        /// <summary>
+        /// Associations1 will be multiplied by the weightFactor then added to associations2. The result will be normalised.
+        /// </summary>
+        /// <param name="associations1"></param>
+        /// <param name="associations2"></param>
+        /// <param name="weightFactor"></param>
+        /// <returns></returns>
+        public AssociationsLookup AddAssociationLookups(AssociationsLookup associationsLookup1, AssociationsLookup associationsLookup2, double weightFactor)
+        {
+            var combinedAssociationsLookup = new AssociationsLookup();
+            foreach (var associationEntry in associationsLookup1)
+            {
+                var key = associationEntry.Key;
+                var associations = new Associations();
+                var weightedAssociations1 = associationEntry.Value.Select(x => new KeyValuePair<string, double>(x.Key, x.Value * weightFactor));
+                var associations2 = associationsLookup2[key];
+
+                var combinedAssociations = weightedAssociations1.ToDictionary(x => x.Key, x => x.Value + associations2[x.Key]);
+
+                combinedAssociationsLookup.Add(key, new Associations(combinedAssociations));
+            }
+
+            return combinedAssociationsLookup;
         }
     }
 }

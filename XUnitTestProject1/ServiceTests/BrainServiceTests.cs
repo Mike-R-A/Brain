@@ -42,13 +42,13 @@ namespace BrainTests.ServiceTests
                 { "expectedBlue", 77 }
             });
 
-            mockMathsService.Setup(x => x.NormaliseDictionary(It.Is<Dictionary<string, double>>(
+            mockMathsService.Setup(x => x.NormaliseAssociations(It.Is<Associations>(
                 d => d.ContainsKey("green") ? d["green"] == 10 : false
                 && d.ContainsKey("blue") ? d["blue"] == 65 : false))).Returns(expectedRedNormalisedAssociations);
-            mockMathsService.Setup(x => x.NormaliseDictionary(It.Is<Dictionary<string, double>>(
+            mockMathsService.Setup(x => x.NormaliseAssociations(It.Is<Associations>(
                 d => d.ContainsKey("red") ? d["red"] == 10 : false
                 && d.ContainsKey("blue") ? d["blue"] == 26 : false))).Returns(expectedGreenNormalisedAssociations);
-            mockMathsService.Setup(x => x.NormaliseDictionary(It.Is<Dictionary<string, double>>(
+            mockMathsService.Setup(x => x.NormaliseAssociations(It.Is<Associations>(
                 d => d.ContainsKey("green") ? d["green"] == 26 : false
                 && d.ContainsKey("red") ? d["red"] == 65 : false))).Returns(expectedBlueNormalisedAssociations);
 
@@ -102,15 +102,5 @@ namespace BrainTests.ServiceTests
             actual["volume"].Should().Be(2);
             actual["pain"].Should().Be(13);
         }
-
-        //[Fact]
-        //public void AddAssociations_Should_AddUsingWeightAndNormalise()
-        //{
-        //    var service = GetService();
-
-        //    var associations1 = new Dictionary<string, >
-
-        //    var actual = service.AddAssociations();
-        //}
     }
 }
