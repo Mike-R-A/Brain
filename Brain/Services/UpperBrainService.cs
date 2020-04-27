@@ -10,6 +10,8 @@ namespace Brain.Services
     {
         List<SenseInputs> GetFuturePredictedInputs(AssociationsLookup existingAssociationsLookup, SenseInputs actualInput,
             int requestedFuturePredictionLength);
+        AssociationsLookup UpdateAssociationsLookup(AssociationsLookup existingAssociationsLookup, SenseInputs actualInputs,
+            double weightFactor);
     }
 
     public class UpperBrainService : IUpperBrainService
@@ -38,7 +40,8 @@ namespace Brain.Services
             return futurePredictedInputs;
         }
 
-        public AssociationsLookup UpdateAssociationsLookup(AssociationsLookup existingAssociationsLookup, SenseInputs actualInputs, double weightFactor)
+        public AssociationsLookup UpdateAssociationsLookup(AssociationsLookup existingAssociationsLookup, 
+            SenseInputs actualInputs, double weightFactor)
         {
             var inputAssociationsLookup = brainService.CreateAssociations(actualInputs);
             var updatedAssociationsLookup = brainService.AddAndNormaliseAssociationsLookups(inputAssociationsLookup, existingAssociationsLookup, weightFactor);

@@ -17,8 +17,7 @@ namespace BrainTests.ServiceTests
         private BrainService GetService()
         {
             mockMathsService = new Mock<IMathsService>();
-            mockBrainRepository = new Mock<IBrainRepository>();
-            return new BrainService(mockMathsService.Object, mockBrainRepository.Object);
+            return new BrainService(mockMathsService.Object);
         }
 
         [Fact]
@@ -150,32 +149,6 @@ namespace BrainTests.ServiceTests
             actual["no1"].Should().BeSameAs(expectedNormalised1);
             actual["no2"].Should().BeSameAs(expectedNormalised2);
             actual.Count.Should().Be(2);
-        }
-
-        [Fact]
-        public void GetCurrentAssociationsLookup_Should_ReturnFromTheRepository()
-        {
-            var service = GetService();
-            var expected = new AssociationsLookup();
-            var id = "12414fwf";
-
-            mockBrainRepository.Setup(x => x.GetCurrentAssociationsLookup(id)).Returns(expected);
-
-            var actual = service.GetCurrentAssociationsLookup(id);
-
-            actual.Should().BeSameAs(expected);
-        }
-
-        [Fact]
-        public void SaveAssociationsLookup_Should_SaveToTheRepository()
-        {
-            var service = GetService();
-            var expectedLookup = new AssociationsLookup();
-            var expectedId = "12414fwf";
-
-            service.SaveAssociationsLookup(expectedId, expectedLookup);
-
-            mockBrainRepository.Verify(x => x.SaveAssociationsLookup(expectedId, expectedLookup));
         }
     }
 }

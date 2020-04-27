@@ -14,14 +14,15 @@ namespace Brain.Repositories
 
     public class BrainRepository : IBrainRepository
     {
+        private AssociationsLookup _associationsLookup;
         public AssociationsLookup GetCurrentAssociationsLookup(string id)
         {
-            throw new NotImplementedException();
+            return _associationsLookup;
         }
 
         public void SaveAssociationsLookup(string id, AssociationsLookup associationsLookup)
         {
-            throw new NotImplementedException();
+            _associationsLookup = associationsLookup;
         }
     }
 }
