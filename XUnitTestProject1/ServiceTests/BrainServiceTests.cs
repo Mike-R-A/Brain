@@ -102,5 +102,51 @@ namespace BrainTests.ServiceTests
             actual["volume"].Should().Be(18);
             actual["pain"].Should().Be(26.0 / 3.0);
         }
+
+        [Fact]
+        public void AddAndNormaliseAssociationsLookups_Should_DoSomething()
+        {
+            var service = GetService();
+
+            var associationsLookup1 = new AssociationsLookup();
+            var associationsLookup2 = new AssociationsLookup();
+            var weightFactor = 0.5;
+            var expectedAssociations1 = new Associations
+                    {
+                        {
+                            "no2", 0.1
+                        }
+                    };
+            var expectedAssociations2 = new Associations
+                    {
+                        {
+                            "no1", 0.9
+                        }
+                    };
+            var expectedAssociationsLookup = new AssociationsLookup 
+            {
+                { 
+                    "no1", 
+                    expectedAssociations1
+                },
+                {
+                    "no2",
+                    expectedAssociations2
+                }
+            };
+            var expectedNormalised1 = new Associations();
+            var expectedNormalised2 = new Associations();
+
+            mockMathsService.Setup(x => x.AddAssociationLookups(associationsLookup1, associationsLookup2, weightFactor))
+                .Returns(expectedAssociationsLookup);
+            mockMathsService.Setup(x => x.NormaliseAssociations(expectedAssociations1)).Returns(expectedNormalised1);
+            mockMathsService.Setup(x => x.NormaliseAssociations(expectedAssociations2)).Returns(expectedNormalised2);
+
+            var actual = service.AddAndNormaliseAssociationsLookups(associationsLookup1, associationsLookup2, weightFactor);
+
+            actual["no1"].Should().BeSameAs(expectedNormalised1);
+            actual["no2"].Should().BeSameAs(expectedNormalised2);
+            actual.Count.Should().Be(2);
+        }
     }
 }
