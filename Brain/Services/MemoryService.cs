@@ -9,12 +9,11 @@ namespace Brain.Services
 {
     public interface IMemoryService
     {
-        List<SenseInputs> ManageSenseInputs(string id, SenseInputs senseInputs);
-        AssociationsLookup GetCurrentAssociationsLookup(string id);
-        void SaveAssociationsLookup(string id, AssociationsLookup associationsLookup);
+        List<SenseInputs> ManageSenseInputs(string id, SenseInputs senseInputs,
+            int requestedFuturePredictions, double newInputsWeightFactor);
     }
 
-    public class MemoryService
+    public class MemoryService : IMemoryService
     {
         private readonly IUpperBrainService upperBrainService;
         private readonly IBrainRepository brainRepository;

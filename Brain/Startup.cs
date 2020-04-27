@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Brain.Repositories;
+using Brain.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -26,6 +28,12 @@ namespace Brain
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
+            services.AddSingleton<IBrainRepository, BrainRepository>();
+            services.AddScoped<IBrainService, BrainService>();
+            services.AddScoped<IMathsService, MathsService>();
+            services.AddScoped<IUpperBrainService, UpperBrainService>();
+            services.AddScoped<IMemoryService, MemoryService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
