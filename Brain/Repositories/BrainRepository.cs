@@ -18,69 +18,15 @@ namespace Brain.Repositories
 
         public BrainRepository()
         {
-            _associationsLookup = new AssociationsLookup
+            var keys = new string[] 
             {
-                {
-                    "red",
-                    new Associations
-                    {
-                        {
-                            "pain", 0.3333333333
-                        },
-                        {
-                            "green", 0.3333333333
-                        },
-                        {
-                            "pleasure", 0.3333333333
-                        }
-                    }
-                },
-                {
-                    "pain",
-                    new Associations
-                    {
-                        {
-                            "red", 0.3333333333
-                        },
-                        {
-                            "green", 0.3333333333
-                        },
-                        {
-                            "pleasure", 0.3333333333
-                        }
-                    }
-                },
-                {
-                    "green",
-                    new Associations
-                    {
-                        {
-                            "pain", 0.3333333333
-                        },
-                        {
-                            "red", 0.3333333333
-                        },
-                        {
-                            "pleasure", 0.3333333333
-                        }
-                    }
-                },
-                {
-                    "pleasure",
-                    new Associations
-                    {
-                        {
-                            "pain", 0.3333333333
-                        },
-                        {
-                            "green", 0.3333333333
-                        },
-                        {
-                            "red", 0.3333333333
-                        }
-                    }
-                }
+                "red",
+                "green",
+                "pleasure",
+                "pain"
             };
+
+            InitialiseAssociations(keys);
         }
 
         public AssociationsLookup GetCurrentAssociationsLookup(string id)
@@ -91,6 +37,19 @@ namespace Brain.Repositories
         public void SaveAssociationsLookup(string id, AssociationsLookup associationsLookup)
         {
             _associationsLookup = associationsLookup;
+        }
+
+        public void InitialiseAssociations(string[] keys)
+        {
+            _associationsLookup = new AssociationsLookup();
+
+            foreach (var key in keys)
+            {
+                var otherKeys = keys.Where(x => x != key);
+                var associationsList = otherKeys.Select(o => new KeyValuePair<string, double>(o, 1 / keys.Count()));
+
+                _associationsLookup.Add(key, new Associations(associationsList.ToDictionary(x => x.Key, x => x.Value)));
+            }
         }
     }
 }
