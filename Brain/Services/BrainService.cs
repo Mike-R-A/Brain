@@ -1,4 +1,5 @@
 ﻿using Brain.Model;
+using Brain.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,14 +13,18 @@ namespace Brain.Services
         SenseInputs GetPredictedFutureInput(SenseInputs actualInput, 
             AssociationsLookup associations);
         AssociationsLookup AddAndNormaliseAssociationsLookups(AssociationsLookup lookup1, AssociationsLookup lookup2, double weightFactor);
+        AssociationsLookup GetCurrentAssociationsLookup(string id);
+        void SaveAssociationsLookup(string id, AssociationsLookup associationsLookup);
     }
     public class BrainService : IBrainService
     {
         private readonly IMathsService mathsService;
+        private readonly IBrainRepository brainRepository;
 
-        public BrainService(IMathsService mathsService)
+        public BrainService(IMathsService mathsService, IBrainRepository brainRepository)
         {
             this.mathsService = mathsService;
+            this.brainRepository = brainRepository;
         }
         public AssociationsLookup CreateAssociations(SenseInputs senseInputs)
         {
@@ -69,6 +74,16 @@ namespace Brain.Services
             }
 
             return normalisedCombinedLookups;
+        }
+
+        public AssociationsLookup GetCurrentAssociationsLookup(string id)
+        {
+            return brainRepository.GetCurrentAssociationsLookup(id);
+        }
+
+        public void SaveAssociationsLookup(string id, AssociationsLookup associationsLookup)
+        {
+            brainRepository.SaveAssociationsLookup(id, associationsLookup);
         }
     }
 }

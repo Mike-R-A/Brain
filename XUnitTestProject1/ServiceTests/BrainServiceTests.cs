@@ -1,4 +1,5 @@
 ﻿using Brain.Model;
+using Brain.Repositories;
 using Brain.Services;
 using FluentAssertions;
 using Moq;
@@ -12,10 +13,12 @@ namespace BrainTests.ServiceTests
     public class BrainServiceTests
     {
         Mock<IMathsService> mockMathsService;
+        Mock<IBrainRepository> mockBrainRepository;
         private BrainService GetService()
         {
             mockMathsService = new Mock<IMathsService>();
-            return new BrainService(mockMathsService.Object);
+            mockBrainRepository = new Mock<IBrainRepository>();
+            return new BrainService(mockMathsService.Object, mockBrainRepository.Object);
         }
 
         [Fact]
@@ -104,7 +107,7 @@ namespace BrainTests.ServiceTests
         }
 
         [Fact]
-        public void AddAndNormaliseAssociationsLookups_Should_DoSomething()
+        public void AddAndNormaliseAssociationsLookups_Should_ReturnExpected()
         {
             var service = GetService();
 
@@ -147,6 +150,32 @@ namespace BrainTests.ServiceTests
             actual["no1"].Should().BeSameAs(expectedNormalised1);
             actual["no2"].Should().BeSameAs(expectedNormalised2);
             actual.Count.Should().Be(2);
+        }
+
+        [Fact]
+        public void GetCurrentAssociationsLookup_Should_ReturnFromTheRepository()
+        {
+            var service = GetService();
+            var expected = new AssociationsLookup();
+            var id = "12414fwf";
+
+            mockBrainRepository.Setup(x => x.GetCurrentAssociationsLookup(id)).Returns(expected);
+
+            var actual = service.GetCurrentAssociationsLookup(id);
+
+            actual.Should().BeSameAs(expected);
+        }
+
+        [Fact]
+        public void SaveAssociationsLookup_Should_SaveToTheRepository()
+        {
+            var service = GetService();
+            var expectedLookup = new AssociationsLookup();
+            var expectedId = "12414fwf";
+
+            service.SaveAssociationsLookup(expectedId, expectedLookup);
+
+            mockBrainRepository.Verify(x => x.SaveAssociationsLookup(expectedId, expectedLookup));
         }
     }
 }
