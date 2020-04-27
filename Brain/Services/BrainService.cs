@@ -50,7 +50,8 @@ namespace Brain.Services
                 {
                     predictedInput += actualInput[association.Key] * association.Value;
                 }
-                predictedInput = predictedInput / associationsRelatedToThisInput.Count;
+                predictedInput += senseInput.Value;
+                predictedInput = predictedInput / actualInput.Count;
 
                 predictedFutureInput.Add(senseInput.Key, predictedInput);
             }
