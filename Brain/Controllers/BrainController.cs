@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Brain.Model;
+using Brain.Repositories;
+using Brain.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,31 +14,27 @@ namespace Brain.Controllers
     [ApiController]
     public class BrainController : ControllerBase
     {
-        [HttpGet]
-        public IEnumerable<string> Get()
+        private readonly IMemoryService memoryService;
+        private readonly IBrainRepository brainRepository;
+
+        public BrainController(IMemoryService memoryService, IBrainRepository brainRepository)
         {
-            return new string[] { "value1", "value2" };
+            this.memoryService = memoryService;
+            this.brainRepository = brainRepository;
         }
 
-        [HttpGet("{id}", Name = "Get")]
-        public string Get(int id)
+        [HttpPost("{id}")]
+        public JsonResult Post(string id, [FromBody] SenseInputs senseInputs)
         {
-            return "value";
+            var predicted = memoryService.ManageSenseInputs(id, senseInputs);
+            return new JsonResult(predicted);
         }
 
-        [HttpPost]
-        public void Post([FromBody] string value)
+        [HttpGet("{id}")]
+        public JsonResult Get(string id)
         {
-        }
-
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+            var lookup = brainRepository.GetCurrentAssociationsLookup(id);
+            return new JsonResult(lookup);
         }
     }
 }

@@ -9,8 +9,7 @@ namespace Brain.Services
 {
     public interface IMemoryService
     {
-        List<SenseInputs> ManageSenseInputs(string id, SenseInputs senseInputs,
-            int requestedFuturePredictions, double newInputsWeightFactor);
+        List<SenseInputs> ManageSenseInputs(string id, SenseInputs senseInputs);
     }
 
     public class MemoryService : IMemoryService
@@ -24,8 +23,10 @@ namespace Brain.Services
             this.brainRepository = brainRepository;
         }
 
-        public List<SenseInputs> ManageSenseInputs(string id, SenseInputs senseInputs, int requestedFuturePredictions, double newInputsWeightFactor)
+        public List<SenseInputs> ManageSenseInputs(string id, SenseInputs senseInputs)
         {
+            var requestedFuturePredictions = upperBrainService.GetNoOfPredictions();
+            var newInputsWeightFactor = upperBrainService.GetNewInputsWeightFactor();
             var existingAssociationsLookup = brainRepository.GetCurrentAssociationsLookup(id);
             var futurePredictedInputs = upperBrainService.GetFuturePredictedInputs(existingAssociationsLookup, senseInputs, requestedFuturePredictions);
             var updatedAssociationsLookup = upperBrainService.UpdateAssociationsLookup(existingAssociationsLookup, senseInputs, newInputsWeightFactor);

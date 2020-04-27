@@ -43,6 +43,16 @@ namespace Brain.Services
         {
             var sum = dict.Values.Sum();
 
+            if(sum == 0)
+            {
+                var keys = new List<string>(dict.Keys);
+                foreach (var key in keys)
+                {
+                    dict[key] = 1 / dict.Count;
+                }
+                return dict;
+            }
+
             return ScaleAssociations(dict, 1 / sum);
         }
 

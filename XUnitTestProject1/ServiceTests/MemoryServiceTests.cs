@@ -36,8 +36,10 @@ namespace BrainTests.ServiceTests
                 senseInputs, requestedFuturePredictions)).Returns(expectedFuturePredictedInputs);
             mockUpperBrainService.Setup(x => x.UpdateAssociationsLookup(expectedExistingAssociationsLookup, senseInputs, 
                 newInputsWeightFactor)).Returns(expectedUpdatedAssociationsLookup);
+            mockUpperBrainService.Setup(x => x.GetNoOfPredictions()).Returns(requestedFuturePredictions);
+            mockUpperBrainService.Setup(x => x.GetNewInputsWeightFactor()).Returns(newInputsWeightFactor);
 
-            List<SenseInputs> actual = service.ManageSenseInputs(id, senseInputs, requestedFuturePredictions, newInputsWeightFactor);
+            List<SenseInputs> actual = service.ManageSenseInputs(id, senseInputs);
 
             mockBrainRepository.Verify(x => x.SaveAssociationsLookup(id, expectedUpdatedAssociationsLookup), Times.Once);
             actual.Should().BeSameAs(expectedFuturePredictedInputs);

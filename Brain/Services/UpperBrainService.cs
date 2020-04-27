@@ -12,6 +12,8 @@ namespace Brain.Services
             int requestedFuturePredictionLength);
         AssociationsLookup UpdateAssociationsLookup(AssociationsLookup existingAssociationsLookup, SenseInputs actualInputs,
             double weightFactor);
+        int GetNoOfPredictions();
+        double GetNewInputsWeightFactor();
     }
 
     public class UpperBrainService : IUpperBrainService
@@ -38,6 +40,16 @@ namespace Brain.Services
             }
 
             return futurePredictedInputs;
+        }
+
+        public double GetNewInputsWeightFactor()
+        {
+            return 0.1;
+        }
+
+        public int GetNoOfPredictions()
+        {
+            return 10;
         }
 
         public AssociationsLookup UpdateAssociationsLookup(AssociationsLookup existingAssociationsLookup, 
