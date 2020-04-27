@@ -64,6 +64,26 @@ namespace BrainTests.ServiceTests
         }
 
         [Fact]
+        public void NormaliseDictionary_Should_DealWithZeroSum()
+        {
+            var service = GetService();
+
+            var dict = new Associations
+            {
+                { "key1", 0 },
+                { "key2", 0 },
+                { "key3", 0 }
+            };
+
+            var actual = service.NormaliseAssociations(dict);
+
+            actual.Count().Should().Be(dict.Count);
+            actual["key1"].Should().Be(1/3);
+            actual["key2"].Should().Be(1/3);
+            actual["key3"].Should().Be(1/3);
+        }
+
+        [Fact]
         public void ScaleDictionary_Should_ReturnAScaledDictionary()
         {
             var service = GetService();
