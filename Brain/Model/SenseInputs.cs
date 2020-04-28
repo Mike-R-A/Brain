@@ -4,6 +4,5 @@ namespace Brain.Model
 {
     public class SenseInputs : Dictionary<string, double>
     {
-
     }
 }

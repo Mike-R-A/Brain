@@ -11,16 +11,36 @@ namespace Brain.Services
         Associations AddAssociations(Associations dictionary1, Associations dictionary2);
         Associations ScaleAssociations(Associations dict, double factor);
         AssociationsLookup AddAssociationLookups(AssociationsLookup associationsLookup1, AssociationsLookup associationsLookup2, double weightFactor);
-
+        SenseInputs MeanSenseInputs(SenseInputs dictionary1, SenseInputs dictionary2);
     }
 
     public class MathsService : IMathsService
     {
         public Associations AddAssociations(Associations dictionary1, Associations dictionary2)
         {
+            var result = AddDictionaries(dictionary1, dictionary2);
+
+            return new Associations(result);
+        }
+
+        public SenseInputs MeanSenseInputs(SenseInputs dictionary1, SenseInputs dictionary2)
+        {
+            var result = AddDictionaries(dictionary1, dictionary2);
+            var senseInputs = new SenseInputs();
+
+            foreach(var entry in result)
+            {
+                senseInputs.Add(entry.Key, entry.Value / 2);
+            }
+
+            return senseInputs;
+        }
+
+        private Dictionary<string, double> AddDictionaries(IDictionary<string, double> dictionary1, IDictionary<string, double> dictionary2)
+        {
             var result = new Dictionary<string, double>();
 
-            foreach(var keyValuePair in dictionary1)
+            foreach (var keyValuePair in dictionary1)
             {
                 result.Add(keyValuePair.Key, keyValuePair.Value);
             }
@@ -30,13 +50,14 @@ namespace Brain.Services
                 if (result.Keys.Contains(keyValuePair.Key))
                 {
                     result[keyValuePair.Key] += keyValuePair.Value;
-                } else
+                }
+                else
                 {
                     result.Add(keyValuePair.Key, keyValuePair.Value);
                 }
             }
 
-            return new Associations(result);
+            return result;
         }
 
         public Associations NormaliseAssociations(Associations dict)

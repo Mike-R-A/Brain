@@ -44,6 +44,33 @@ namespace BrainTests.ServiceTests
         }
 
         [Fact]
+        public void MeanSenseInputs_Should_ReturnExpectedMeanValues()
+        {
+            var service = GetService();
+
+            var senseInputs1 = new SenseInputs
+            {
+                { "redLight", 0.1 },
+                { "greenLight", 0.8 },
+                { "blueLight", 0.1 }
+            };
+            var senseInputs2 = new SenseInputs
+            {
+                { "redLight", 0.5 },
+                { "greenLight", 0.2 },
+                { "blueLight", 0.3 }
+            };
+
+            var actual = service.MeanSenseInputs(senseInputs2, senseInputs1);
+
+            foreach (var keyValuePair in actual)
+            {
+                var expectedValue = (senseInputs1[keyValuePair.Key] + senseInputs2[keyValuePair.Key]) / 2;
+                keyValuePair.Value.Should().Be(expectedValue);
+            }
+        }
+
+        [Fact]
         public void NormaliseDictionary_Should_NormaliseADictionary()
         {
             var service = GetService();

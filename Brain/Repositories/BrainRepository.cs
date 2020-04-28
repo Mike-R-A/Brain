@@ -10,45 +10,56 @@ namespace Brain.Repositories
     {
         AssociationsLookup GetCurrentAssociationsLookup(string id);
         void SaveAssociationsLookup(string id, AssociationsLookup associationsLookup);
+        SenseInputs GetLastSenseInputs(string id);
+        void SaveSenseInputs(string id, SenseInputs senseInputs);
+        void Initialise(string id, string[] keys);
     }
 
     public class BrainRepository : IBrainRepository
     {
-        private AssociationsLookup _associationsLookup;
+        private Dictionary<string, AssociationsLookup> _associationsLookupById;
+        private Dictionary<string, SenseInputs> _lastSenseInputsById;
 
         public BrainRepository()
         {
-            var keys = new string[] 
-            {
-                "red",
-                "green",
-                "pleasure",
-                "pain"
-            };
-
-            InitialiseAssociations(keys);
+            _associationsLookupById = new Dictionary<string, AssociationsLookup>();
+            _lastSenseInputsById = new Dictionary<string, SenseInputs>();
         }
 
         public AssociationsLookup GetCurrentAssociationsLookup(string id)
         {
-            return _associationsLookup;
+            return _associationsLookupById[id];
         }
 
         public void SaveAssociationsLookup(string id, AssociationsLookup associationsLookup)
         {
-            _associationsLookup = associationsLookup;
+            _associationsLookupById[id] = associationsLookup;
         }
 
-        public void InitialiseAssociations(string[] keys)
+        public SenseInputs GetLastSenseInputs(string id)
         {
-            _associationsLookup = new AssociationsLookup();
+            return _lastSenseInputsById[id];
+        }
+
+        public void SaveSenseInputs(string id, SenseInputs senseInputs)
+        {
+            _lastSenseInputsById[id] = senseInputs;
+        }
+
+        public void Initialise(string id, string[] keys)
+        {
+            _lastSenseInputsById.Add(id, new SenseInputs());
+
+            _associationsLookupById.Add(id, new AssociationsLookup());
 
             foreach (var key in keys)
             {
+                _lastSenseInputsById[id].Add(key, 0);
+
                 var otherKeys = keys.Where(x => x != key);
                 var associationsList = otherKeys.Select(o => new KeyValuePair<string, double>(o, 1 / keys.Count()));
 
-                _associationsLookup.Add(key, new Associations(associationsList.ToDictionary(x => x.Key, x => x.Value)));
+                _associationsLookupById[id].Add(key, new Associations(associationsList.ToDictionary(x => x.Key, x => x.Value)));
             }
         }
     }

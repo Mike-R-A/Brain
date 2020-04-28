@@ -14,9 +14,10 @@ namespace BrainTests.ServiceTests
     {
         Mock<IUpperBrainService> mockUpperBrainService = new Mock<IUpperBrainService>();
         Mock<IBrainRepository> mockBrainRepository = new Mock<IBrainRepository>();
+        Mock<IMathsService> mockMathsService = new Mock<IMathsService>();
         private MemoryService GetService()
         {
-            return new MemoryService(mockUpperBrainService.Object, mockBrainRepository.Object);
+            return new MemoryService(mockUpperBrainService.Object, mockBrainRepository.Object, mockMathsService.Object);
         }
 
         [Fact]
@@ -30,11 +31,15 @@ namespace BrainTests.ServiceTests
             var expectedExistingAssociationsLookup = new AssociationsLookup();
             var expectedUpdatedAssociationsLookup = new AssociationsLookup();
             var expectedFuturePredictedInputs = new List<SenseInputs>();
+            var expectedLastInputs = new SenseInputs();
+            var expectedCombinedInputs = new SenseInputs();
 
+            mockBrainRepository.Setup(x => x.GetLastSenseInputs(id)).Returns(expectedLastInputs);
+            mockMathsService.Setup(x => x.MeanSenseInputs(senseInputs, expectedLastInputs)).Returns(expectedCombinedInputs);
             mockBrainRepository.Setup(x => x.GetCurrentAssociationsLookup(id)).Returns(expectedExistingAssociationsLookup);
             mockUpperBrainService.Setup(x => x.GetFuturePredictedInputs(expectedExistingAssociationsLookup,
-                senseInputs, requestedFuturePredictions)).Returns(expectedFuturePredictedInputs);
-            mockUpperBrainService.Setup(x => x.UpdateAssociationsLookup(expectedExistingAssociationsLookup, senseInputs, 
+                expectedCombinedInputs, requestedFuturePredictions)).Returns(expectedFuturePredictedInputs);
+            mockUpperBrainService.Setup(x => x.UpdateAssociationsLookup(expectedExistingAssociationsLookup, expectedCombinedInputs, 
                 newInputsWeightFactor)).Returns(expectedUpdatedAssociationsLookup);
             mockUpperBrainService.Setup(x => x.GetNoOfPredictions()).Returns(requestedFuturePredictions);
             mockUpperBrainService.Setup(x => x.GetNewInputsWeightFactor()).Returns(newInputsWeightFactor);

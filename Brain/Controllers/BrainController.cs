@@ -30,6 +30,12 @@ namespace Brain.Controllers
             return new JsonResult(predicted);
         }
 
+        [HttpPut("{id}")]
+        public void Put(string id, [FromBody] string[] senseKeys)
+        {
+            brainRepository.Initialise(id, senseKeys);
+        }
+
         [HttpGet("{id}")]
         public JsonResult Get(string id)
         {
