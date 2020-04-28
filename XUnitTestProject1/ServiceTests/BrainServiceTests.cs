@@ -100,9 +100,9 @@ namespace BrainTests.ServiceTests
 
             var actual = service.GetPredictedFutureInput(actualInput, associations);
 
-            actual["yellow"].Should().Be(10);
-            actual["volume"].Should().Be(18);
-            actual["pain"].Should().Be(26.0 / 3.0);
+            actual["yellow"].Should().Be(15.0);
+            actual["volume"].Should().Be(27.0);
+            actual["pain"].Should().Be(13.0);
         }
 
         [Fact]
