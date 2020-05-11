@@ -12,7 +12,7 @@ namespace Brain.Services
         AssociationsLookup CreateAssociations(SenseInputs senseInputs);
         SenseInputs GetPredictedFutureInput(SenseInputs actualInput, 
             AssociationsLookup associations);
-        AssociationsLookup AddAndNormaliseAssociationsLookups(AssociationsLookup lookup1, AssociationsLookup lookup2, double weightFactor);
+        AssociationsLookup AddAssociationsLookups(AssociationsLookup lookup1, AssociationsLookup lookup2, double weightFactor);
     }
     public class BrainService : IBrainService
     {
@@ -32,8 +32,8 @@ namespace Brain.Services
                 var associationsDictionary = otherSenseInputs
                     .Select(o => new KeyValuePair<string, double>(o.Key, o.Value * senseInput.Value))
                     .ToDictionary(x => x.Key, x => x.Value);
-                var normalisedAssociationsDictionary = mathsService.NormaliseAssociations(new Associations(associationsDictionary));
-                associations.Add(senseInput.Key, new Associations(normalisedAssociationsDictionary));
+                //var normalisedAssociationsDictionary = mathsService.NormaliseAssociations(new Associations(associationsDictionary));
+                associations.Add(senseInput.Key, new Associations(associationsDictionary));
             }
 
             return associations;
@@ -47,11 +47,16 @@ namespace Brain.Services
             {
                 double predictedInput = 0;
                 var associationsRelatedToThisInput = associations[senseInput.Key];
+                var associationTotal = 0.0;
                 foreach(var association in associationsRelatedToThisInput)
                 {
-                    predictedInput += actualInput[association.Key] * association.Value;
+                    if(association.Value > 0)
+                    {
+                        predictedInput += actualInput[association.Key] * association.Value;
+                        associationTotal += association.Value;
+                    }
                 }
-                predictedInput = (predictedInput + senseInput.Value) / 2;
+                predictedInput = (predictedInput + senseInput.Value) / (associationTotal + 1);
 
                 predictedFutureInput.Add(senseInput.Key, predictedInput);
             }
@@ -59,16 +64,11 @@ namespace Brain.Services
             return predictedFutureInput;
         }
 
-        public AssociationsLookup AddAndNormaliseAssociationsLookups(AssociationsLookup lookup1, AssociationsLookup lookup2, double weightFactor)
+        public AssociationsLookup AddAssociationsLookups(AssociationsLookup lookup1, AssociationsLookup lookup2, double weightFactor)
         {
-            var normalisedCombinedLookups = new AssociationsLookup();
             var combinedLookups = mathsService.AddAssociationLookups(lookup1, lookup2, weightFactor);
-            foreach(var lookup in combinedLookups)
-            {
-                normalisedCombinedLookups.Add(lookup.Key, mathsService.NormaliseAssociations(lookup.Value));
-            }
 
-            return normalisedCombinedLookups;
+            return combinedLookups;
         }
     }
 }

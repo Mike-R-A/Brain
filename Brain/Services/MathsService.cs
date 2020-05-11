@@ -93,6 +93,7 @@ namespace Brain.Services
         /// <returns></returns>
         public AssociationsLookup AddAssociationLookups(AssociationsLookup associationsLookup1, AssociationsLookup associationsLookup2, double weightFactor)
         {
+            var otherWeightFactor = 1 - weightFactor;
             var combinedAssociationsLookup = new AssociationsLookup();
             foreach (var associationEntry in associationsLookup1)
             {
@@ -101,7 +102,7 @@ namespace Brain.Services
                 var weightedAssociations1 = associationEntry.Value.Select(x => new KeyValuePair<string, double>(x.Key, x.Value * weightFactor));
                 var associations2 = associationsLookup2[key];
 
-                var combinedAssociations = weightedAssociations1.ToDictionary(x => x.Key, x => x.Value + associations2[x.Key]);
+                var combinedAssociations = weightedAssociations1.ToDictionary(x => x.Key, x => x.Value + associations2[x.Key] * otherWeightFactor);
 
                 combinedAssociationsLookup.Add(key, new Associations(combinedAssociations));
             }

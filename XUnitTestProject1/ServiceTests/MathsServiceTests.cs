@@ -132,7 +132,7 @@ namespace BrainTests.ServiceTests
         }
 
         [Fact]
-        public void AddAssociations_Should_AddUsingWeightAndNormalise()
+        public void AddAssociations_Should_AddUsingWeight()
         {
             var service = GetService();
 
@@ -220,12 +220,12 @@ namespace BrainTests.ServiceTests
 
             AssociationsLookup actual = service.AddAssociationLookups(associations1, associations2, weightFactor);
 
-            actual["red"]["blue"].Should().Be(0.51);
-            actual["red"]["green"].Should().Be(0.59);
-            actual["blue"]["red"].Should().Be(0.51);
-            actual["blue"]["green"].Should().Be(0.59);
-            actual["green"]["red"].Should().Be(0.59);
-            actual["green"]["blue"].Should().Be(0.51);
+            actual["red"]["blue"].Should().Be(0.46);
+            actual["red"]["green"].Should().Be(0.54);
+            actual["blue"]["red"].Should().Be(0.46);
+            actual["blue"]["green"].Should().Be(0.54);
+            actual["green"]["red"].Should().Be(0.54);
+            actual["green"]["blue"].Should().Be(0.46);
         }
     }
 }

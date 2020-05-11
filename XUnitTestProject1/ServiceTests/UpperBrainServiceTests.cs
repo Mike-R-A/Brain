@@ -100,7 +100,7 @@ namespace BrainTests.ServiceTests
             var weightFactor = 0.2;
 
             mockBrainService.Setup(x => x.CreateAssociations(actualInputs)).Returns(inputAssociationsLookup);
-            mockBrainService.Setup(x => x.AddAndNormaliseAssociationsLookups(inputAssociationsLookup, 
+            mockBrainService.Setup(x => x.AddAssociationsLookups(inputAssociationsLookup, 
                 existingAssociationsLookup, weightFactor)).Returns(combinedNormalisedLookup);
 
             var actual = service.UpdateAssociationsLookup(existingAssociationsLookup, actualInputs, weightFactor);

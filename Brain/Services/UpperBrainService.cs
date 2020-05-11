@@ -56,7 +56,7 @@ namespace Brain.Services
             SenseInputs actualInputs, double weightFactor)
         {
             var inputAssociationsLookup = brainService.CreateAssociations(actualInputs);
-            var updatedAssociationsLookup = brainService.AddAndNormaliseAssociationsLookups(inputAssociationsLookup, existingAssociationsLookup, weightFactor);
+            var updatedAssociationsLookup = brainService.AddAssociationsLookups(inputAssociationsLookup, existingAssociationsLookup, weightFactor);
             return updatedAssociationsLookup;
         }
     }

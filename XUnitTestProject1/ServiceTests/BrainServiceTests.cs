@@ -13,7 +13,6 @@ namespace BrainTests.ServiceTests
     public class BrainServiceTests
     {
         Mock<IMathsService> mockMathsService;
-        Mock<IBrainRepository> mockBrainRepository;
         private BrainService GetService()
         {
             mockMathsService = new Mock<IMathsService>();
@@ -33,26 +32,19 @@ namespace BrainTests.ServiceTests
             };
 
             var expectedRedNormalisedAssociations = new Associations(new Dictionary<string, double> {
-                { "expectedRed", 15 }
+                { "green", 10 },
+                { "blue", 65 }
             });
 
             var expectedGreenNormalisedAssociations = new Associations(new Dictionary<string, double> {
-                { "expectedGreen", 199 }
+                { "red", 10 },
+                { "blue", 26 }
             });
 
             var expectedBlueNormalisedAssociations = new Associations(new Dictionary<string, double> {
-                { "expectedBlue", 77 }
+                { "green", 26 },
+                { "red", 65 }
             });
-
-            mockMathsService.Setup(x => x.NormaliseAssociations(It.Is<Associations>(
-                d => d.ContainsKey("green") ? d["green"] == 10 : false
-                && d.ContainsKey("blue") ? d["blue"] == 65 : false))).Returns(expectedRedNormalisedAssociations);
-            mockMathsService.Setup(x => x.NormaliseAssociations(It.Is<Associations>(
-                d => d.ContainsKey("red") ? d["red"] == 10 : false
-                && d.ContainsKey("blue") ? d["blue"] == 26 : false))).Returns(expectedGreenNormalisedAssociations);
-            mockMathsService.Setup(x => x.NormaliseAssociations(It.Is<Associations>(
-                d => d.ContainsKey("green") ? d["green"] == 26 : false
-                && d.ContainsKey("red") ? d["red"] == 65 : false))).Returns(expectedBlueNormalisedAssociations);
 
             var actual = service.CreateAssociations(senseInputs);
 
@@ -113,42 +105,14 @@ namespace BrainTests.ServiceTests
             var associationsLookup1 = new AssociationsLookup();
             var associationsLookup2 = new AssociationsLookup();
             var weightFactor = 0.5;
-            var expectedAssociations1 = new Associations
-                    {
-                        {
-                            "no2", 0.1
-                        }
-                    };
-            var expectedAssociations2 = new Associations
-                    {
-                        {
-                            "no1", 0.9
-                        }
-                    };
-            var expectedAssociationsLookup = new AssociationsLookup 
-            {
-                { 
-                    "no1", 
-                    expectedAssociations1
-                },
-                {
-                    "no2",
-                    expectedAssociations2
-                }
-            };
-            var expectedNormalised1 = new Associations();
-            var expectedNormalised2 = new Associations();
+            var expectedAssociationsLookup = new AssociationsLookup();
 
             mockMathsService.Setup(x => x.AddAssociationLookups(associationsLookup1, associationsLookup2, weightFactor))
                 .Returns(expectedAssociationsLookup);
-            mockMathsService.Setup(x => x.NormaliseAssociations(expectedAssociations1)).Returns(expectedNormalised1);
-            mockMathsService.Setup(x => x.NormaliseAssociations(expectedAssociations2)).Returns(expectedNormalised2);
 
-            var actual = service.AddAndNormaliseAssociationsLookups(associationsLookup1, associationsLookup2, weightFactor);
+            var actual = service.AddAssociationsLookups(associationsLookup1, associationsLookup2, weightFactor);
 
-            actual["no1"].Should().BeSameAs(expectedNormalised1);
-            actual["no2"].Should().BeSameAs(expectedNormalised2);
-            actual.Count.Should().Be(2);
+            actual.Should().BeSameAs(expectedAssociationsLookup);
         }
     }
 }
